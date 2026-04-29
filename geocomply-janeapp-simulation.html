@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GeoComply × Jane App — Healthcare Identity Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gc-blue: #0041ED;
+  --gc-blue-dim: #0041ED18;
+  --gc-blue-mid: #0041ED33;
+  --gc-orange: #FF600F;
+  --gc-orange-dim: #FF600F18;
+  --gc-navy: #0A003C;
+  --gc-teal: #00CD91;
+  --gc-teal-dim: #00CD9122;
+  --gc-lime: #CDE600;
+  --gc-dark: #06061A;
+  --gc-panel: #0C0C2A;
+  --gc-panel-2: #111136;
+  --gc-border: #1A1A4A;
+  --gc-text: #E8ECF8;
+  --gc-text-dim: #7A84B0;
+  --gc-red: #FF3B5C;
+  --gc-red-dim: #FF3B5C18;
+  --gc-amber: #FFB830;
+  --gc-amber-dim: #FFB83018;
+  --jane-purple: #7C3AED;
+  --jane-purple-dim: #7C3AED18;
+  --radius: 12px;
+  --font-display: 'Sora', sans-serif;
+  --font-serif: 'Instrument Serif', serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background: var(--gc-dark); color: var(--gc-text); font-family: var(--font-display); min-height: 100vh; overflow-x: hidden; }
+
+.bg-grid {
+  position: fixed; inset:0; z-index:0; pointer-events:none;
+  background-image: linear-gradient(rgba(0,65,237,.018) 1px, transparent 1px), linear-gradient(90deg, rgba(0,65,237,.018) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+.bg-glow {
+  position:fixed; top:-300px; left:50%; transform:translateX(-50%);
+  width:900px; height:900px; border-radius:50%;
+  background:radial-gradient(circle, rgba(0,65,237,.07) 0%, transparent 60%);
+  z-index:0; pointer-events:none; animation: pulseglow 9s ease-in-out infinite;
+}
+@keyframes pulseglow { 0%,100%{opacity:.5;transform:translateX(-50%) scale(1)} 50%{opacity:1;transform:translateX(-50%) scale(1.08)} }
+
+.app { position:relative; z-index:1; max-width:1360px; margin:0 auto; padding:28px 24px; }
+
+/* HEADER */
+.header { display:flex; align-items:center; justify-content:space-between; padding-bottom:26px; border-bottom:1px solid var(--gc-border); margin-bottom:30px; flex-wrap:wrap; gap:14px; }
+.logo-group { display:flex; align-items:center; gap:14px; }
+.gc-badge { width:40px; height:40px; border-radius:10px; background:var(--gc-blue); display:grid; place-items:center; }
+.gc-badge svg { width:22px; height:22px; }
+.logo-text { font-size:16px; font-weight:700; letter-spacing:-.02em; }
+.logo-div { color:var(--gc-border); margin:0 8px; }
+.jane-name { color:var(--jane-purple); font-weight:700; }
+.header-pills { display:flex; gap:8px; flex-wrap:wrap; }
+.pill { font-family:var(--font-mono); font-size:10px; padding:5px 13px; border-radius:20px; display:flex; align-items:center; gap:5px; }
+.pill-blue { color:var(--gc-blue); background:var(--gc-blue-dim); border:1px solid rgba(0,65,237,.2); }
+.pill-live { color:var(--gc-teal); background:var(--gc-teal-dim); border:1px solid rgba(0,205,145,.2); }
+.dot { width:5px; height:5px; border-radius:50%; background:currentColor; animation:blink 2s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+
+/* NAV TABS */
+.nav-tabs { display:flex; gap:6px; margin-bottom:28px; flex-wrap:wrap; border-bottom:1px solid var(--gc-border); padding-bottom:0; }
+.tab-btn {
+  font-family:var(--font-display); font-size:13px; font-weight:500;
+  padding:10px 20px; border:none; background:none; color:var(--gc-text-dim); cursor:pointer;
+  border-bottom:2px solid transparent; transition:all .2s; margin-bottom:-1px;
+}
+.tab-btn:hover { color:var(--gc-text); }
+.tab-btn.active { color:var(--gc-blue); border-bottom-color:var(--gc-blue); }
+
+.tab-pane { display:none; }
+.tab-pane.active { display:block; }
+
+/* CARDS */
+.card { background:var(--gc-panel); border:1px solid var(--gc-border); border-radius:var(--radius); padding:22px 24px; }
+.card-sm { padding:16px 18px; }
+.card-title { font-size:11px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--gc-text-dim); margin-bottom:12px; }
+.section-title { font-size:22px; font-weight:700; letter-spacing:-.02em; margin-bottom:6px; }
+.section-sub { font-size:14px; color:var(--gc-text-dim); line-height:1.6; margin-bottom:24px; }
+
+/* GRID LAYOUTS */
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
+.grid-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+@media(max-width:900px) { .grid-2,.grid-3,.grid-4 { grid-template-columns:1fr; } }
+
+/* METRIC CARDS */
+.metric { background:var(--gc-panel-2); border:1px solid var(--gc-border); border-radius:10px; padding:18px 20px; }
+.metric-label { font-size:11px; color:var(--gc-text-dim); text-transform:uppercase; letter-spacing:.08em; margin-bottom:8px; }
+.metric-val { font-size:28px; font-weight:700; letter-spacing:-.03em; }
+.metric-sub { font-size:12px; color:var(--gc-text-dim); margin-top:4px; }
+.val-blue { color:var(--gc-blue); }
+.val-teal { color:var(--gc-teal); }
+.val-orange { color:var(--gc-orange); }
+.val-amber { color:var(--gc-amber); }
+.val-red { color:var(--gc-red); }
+
+/* BADGES */
+.badge { display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:600; padding:3px 10px; border-radius:20px; letter-spacing:.04em; }
+.badge-red { background:var(--gc-red-dim); color:var(--gc-red); border:1px solid rgba(255,59,92,.2); }
+.badge-teal { background:var(--gc-teal-dim); color:var(--gc-teal); border:1px solid rgba(0,205,145,.2); }
+.badge-amber { background:var(--gc-amber-dim); color:var(--gc-amber); border:1px solid rgba(255,184,48,.2); }
+.badge-blue { background:var(--gc-blue-dim); color:var(--gc-blue); border:1px solid rgba(0,65,237,.2); }
+.badge-orange { background:var(--gc-orange-dim); color:var(--gc-orange); border:1px solid rgba(255,96,15,.2); }
+
+/* SCENARIO BUTTONS */
+.scenario-bar { display:flex; gap:10px; margin-bottom:28px; flex-wrap:wrap; }
+.sc-btn {
+  font-family:var(--font-display); font-size:13px; font-weight:500;
+  padding:10px 20px; border-radius:8px; border:1px solid var(--gc-border);
+  background:var(--gc-panel); color:var(--gc-text-dim); cursor:pointer; transition:all .25s;
+  display:flex; align-items:center; gap:8px;
+}
+.sc-btn:hover { border-color:var(--gc-blue); color:var(--gc-text); }
+.sc-btn.active-green { border-color:var(--gc-teal); color:var(--gc-teal); background:var(--gc-teal-dim); }
+.sc-btn.active-amber { border-color:var(--gc-amber); color:var(--gc-amber); background:var(--gc-amber-dim); }
+.sc-btn.active-red { border-color:var(--gc-red); color:var(--gc-red); background:var(--gc-red-dim); }
+.sdot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+
+/* SIGNAL STREAM */
+.signal-stream { display:flex; flex-direction:column; gap:8px; max-height:340px; overflow-y:auto; padding-right:4px; }
+.signal-stream::-webkit-scrollbar { width:3px; }
+.signal-stream::-webkit-scrollbar-thumb { background:var(--gc-border); border-radius:3px; }
+.signal-row {
+  display:flex; align-items:flex-start; gap:12px; padding:10px 14px;
+  background:var(--gc-panel-2); border:1px solid var(--gc-border);
+  border-radius:8px; font-size:12px; animation:slidein .3s ease;
+}
+@keyframes slidein { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+.signal-icon { font-size:15px; flex-shrink:0; margin-top:1px; }
+.signal-label { font-weight:600; font-size:11px; color:var(--gc-text-dim); letter-spacing:.05em; text-transform:uppercase; margin-bottom:2px; }
+.signal-val { color:var(--gc-text); line-height:1.4; }
+.signal-time { font-family:var(--font-mono); font-size:10px; color:var(--gc-text-dim); margin-left:auto; flex-shrink:0; padding-top:2px; }
+
+/* RISK GAUGE */
+.risk-gauge-wrap { display:flex; flex-direction:column; align-items:center; padding:24px 0 16px; }
+.risk-arc { position:relative; width:200px; height:110px; }
+.risk-arc canvas { position:absolute; top:0; left:0; }
+.risk-num { position:absolute; bottom:8px; left:50%; transform:translateX(-50%); font-size:36px; font-weight:800; letter-spacing:-.04em; }
+.risk-lbl { font-size:12px; color:var(--gc-text-dim); margin-top:32px; text-align:center; letter-spacing:.05em; text-transform:uppercase; }
+
+/* JOURNEY */
+.journey-wrap { position:relative; }
+.journey-steps { display:flex; gap:0; position:relative; }
+.journey-steps::before { content:''; position:absolute; top:28px; left:5%; right:5%; height:2px; background:linear-gradient(90deg, var(--gc-border), var(--gc-border)); z-index:0; }
+.j-step { flex:1; display:flex; flex-direction:column; align-items:center; position:relative; z-index:1; cursor:pointer; }
+.j-node {
+  width:56px; height:56px; border-radius:50%; border:2px solid var(--gc-border);
+  background:var(--gc-panel); display:grid; place-items:center;
+  font-size:20px; transition:all .3s; margin-bottom:12px;
+}
+.j-step.done .j-node { border-color:var(--gc-teal); background:var(--gc-teal-dim); box-shadow:0 0 18px rgba(0,205,145,.2); }
+.j-step.active .j-node { border-color:var(--gc-blue); background:var(--gc-blue-dim); box-shadow:0 0 22px rgba(0,65,237,.3); animation:nodepulse 2s ease-in-out infinite; }
+.j-step.blocked .j-node { border-color:var(--gc-red); background:var(--gc-red-dim); }
+.j-step.warning .j-node { border-color:var(--gc-amber); background:var(--gc-amber-dim); }
+@keyframes nodepulse { 0%,100%{box-shadow:0 0 22px rgba(0,65,237,.3)} 50%{box-shadow:0 0 38px rgba(0,65,237,.5)} }
+.j-label { font-size:11px; font-weight:600; text-align:center; color:var(--gc-text-dim); line-height:1.4; max-width:90px; }
+.j-step.active .j-label,.j-step.done .j-label { color:var(--gc-text); }
+.j-detail { margin-top:24px; }
+
+.detail-panel { background:var(--gc-panel-2); border:1px solid var(--gc-border); border-radius:10px; padding:20px 22px; }
+.detail-panel h3 { font-size:14px; font-weight:600; margin-bottom:14px; display:flex; align-items:center; gap:8px; }
+.detail-rows { display:flex; flex-direction:column; gap:8px; }
+.detail-row { display:flex; justify-content:space-between; align-items:center; font-size:13px; }
+.detail-row-label { color:var(--gc-text-dim); }
+.detail-row-val { font-weight:600; font-family:var(--font-mono); font-size:12px; }
+
+/* PRODUCT LAYERS */
+.layer { border:1px solid var(--gc-border); border-radius:10px; overflow:hidden; margin-bottom:12px; transition:all .3s; }
+.layer.active { border-color:var(--gc-blue); box-shadow:0 0 24px var(--gc-blue-dim); }
+.layer-header { display:flex; align-items:center; gap:14px; padding:16px 20px; cursor:pointer; background:var(--gc-panel); transition:background .2s; }
+.layer-header:hover { background:var(--gc-panel-2); }
+.layer-num { width:32px; height:32px; border-radius:8px; background:var(--gc-blue); display:grid; place-items:center; font-size:12px; font-weight:700; flex-shrink:0; }
+.layer-title { font-size:14px; font-weight:600; }
+.layer-sub { font-size:12px; color:var(--gc-text-dim); margin-top:2px; }
+.layer-body { padding:20px; background:var(--gc-panel-2); border-top:1px solid var(--gc-border); display:none; }
+.layer.open .layer-body { display:block; }
+.layer-chev { margin-left:auto; color:var(--gc-text-dim); transition:transform .3s; font-size:14px; }
+.layer.open .layer-chev { transform:rotate(180deg); }
+
+/* CAPABILITY GRID */
+.cap-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.cap-item { display:flex; align-items:flex-start; gap:10px; padding:12px; background:var(--gc-panel); border:1px solid var(--gc-border); border-radius:8px; }
+.cap-icon { width:32px; height:32px; border-radius:8px; background:var(--gc-blue-dim); display:grid; place-items:center; font-size:15px; flex-shrink:0; }
+.cap-title { font-size:12px; font-weight:600; margin-bottom:3px; }
+.cap-desc { font-size:11px; color:var(--gc-text-dim); line-height:1.5; }
+
+/* COMPARISON TABLE */
+.comp-table { width:100%; border-collapse:collapse; font-size:13px; }
+.comp-table th { padding:12px 16px; text-align:left; font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--gc-text-dim); border-bottom:1px solid var(--gc-border); }
+.comp-table td { padding:12px 16px; border-bottom:1px solid var(--gc-border); vertical-align:top; line-height:1.5; }
+.comp-table tr:last-child td { border-bottom:none; }
+.comp-table tr:hover td { background:rgba(255,255,255,.02); }
+.check { color:var(--gc-teal); font-size:16px; }
+.cross { color:var(--gc-red); font-size:16px; }
+.partial { color:var(--gc-amber); font-size:16px; }
+
+/* ROI BARS */
+.roi-row { margin-bottom:18px; }
+.roi-header { display:flex; justify-content:space-between; margin-bottom:6px; font-size:13px; }
+.roi-label { color:var(--gc-text); }
+.roi-val { font-weight:700; font-family:var(--font-mono); font-size:12px; }
+.roi-track { height:6px; background:var(--gc-panel-2); border-radius:3px; overflow:hidden; }
+.roi-fill { height:100%; border-radius:3px; transition:width 1.2s cubic-bezier(.2,.8,.2,1); width:0; }
+
+/* RISK ITEMS */
+.risk-item { display:flex; align-items:flex-start; gap:14px; padding:16px 18px; border:1px solid var(--gc-border); border-radius:10px; margin-bottom:10px; background:var(--gc-panel); }
+.risk-sev { width:36px; height:36px; border-radius:8px; display:grid; place-items:center; font-size:13px; font-weight:700; flex-shrink:0; }
+.risk-sev-high { background:#FF3B5C22; color:var(--gc-red); border:1px solid rgba(255,59,92,.3); }
+.risk-sev-med { background:#FFB83022; color:var(--gc-amber); border:1px solid rgba(255,184,48,.3); }
+.risk-sev-low { background:#00CD9122; color:var(--gc-teal); border:1px solid rgba(0,205,145,.3); }
+.risk-title { font-size:13px; font-weight:600; margin-bottom:4px; }
+.risk-desc { font-size:12px; color:var(--gc-text-dim); line-height:1.6; }
+.risk-tag { font-size:10px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; margin-top:6px; display:inline-block; padding:2px 8px; border-radius:4px; }
+
+/* ACTION BTN */
+.run-btn {
+  display:inline-flex; align-items:center; gap:8px;
+  padding:11px 24px; border-radius:8px; border:none; cursor:pointer;
+  font-family:var(--font-display); font-size:13px; font-weight:600; transition:all .2s;
+}
+.btn-primary { background:var(--gc-blue); color:#fff; }
+.btn-primary:hover { background:#0035CC; box-shadow:0 0 20px var(--gc-blue-dim); }
+.btn-ghost { background:transparent; color:var(--gc-text-dim); border:1px solid var(--gc-border); }
+.btn-ghost:hover { color:var(--gc-text); border-color:var(--gc-text-dim); }
+
+/* TIMELINE */
+.timeline { position:relative; padding-left:28px; }
+.timeline::before { content:''; position:absolute; left:8px; top:6px; bottom:6px; width:1px; background:var(--gc-border); }
+.tl-item { position:relative; margin-bottom:20px; }
+.tl-dot { position:absolute; left:-24px; top:4px; width:12px; height:12px; border-radius:50%; border:2px solid var(--gc-border); background:var(--gc-panel); }
+.tl-item.done .tl-dot { border-color:var(--gc-teal); background:var(--gc-teal); }
+.tl-item.active .tl-dot { border-color:var(--gc-blue); background:var(--gc-blue); box-shadow:0 0 8px rgba(0,65,237,.5); }
+.tl-date { font-size:10px; font-family:var(--font-mono); color:var(--gc-text-dim); margin-bottom:3px; }
+.tl-title { font-size:13px; font-weight:600; margin-bottom:3px; }
+.tl-desc { font-size:12px; color:var(--gc-text-dim); line-height:1.5; }
+
+/* GAP WARNING */
+.gap-banner { display:flex; align-items:flex-start; gap:14px; padding:16px 20px; background:rgba(255,184,48,.06); border:1px solid rgba(255,184,48,.2); border-radius:10px; margin-bottom:16px; }
+.gap-icon { font-size:18px; flex-shrink:0; margin-top:1px; }
+.gap-title { font-size:13px; font-weight:600; color:var(--gc-amber); margin-bottom:4px; }
+.gap-desc { font-size:12px; color:var(--gc-text-dim); line-height:1.6; }
+
+/* PROGRESS STEPS */
+.progress-bar-wrap { display:flex; gap:4px; margin-bottom:6px; }
+.pb-seg { flex:1; height:3px; border-radius:2px; background:var(--gc-border); transition:background .4s; }
+.pb-seg.done { background:var(--gc-teal); }
+.pb-seg.active { background:var(--gc-blue); }
+
+/* LOADING SPINNER */
+.spinner { width:18px; height:18px; border:2px solid rgba(255,255,255,.2); border-top-color:#fff; border-radius:50%; animation:spin .7s linear infinite; display:none; }
+@keyframes spin { to{transform:rotate(360deg)} }
+
+.divider { height:1px; background:var(--gc-border); margin:24px 0; }
+</style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<div class="bg-glow"></div>
+
+<div class="app">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo-group">
+      <div class="gc-badge">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 2L4 6v6c0 5.25 3.5 10.15 8 11.5 4.5-1.35 8-6.25 8-11.5V6L12 2z" fill="white" opacity=".9"/></svg>
+      </div>
+      <span class="logo-text">GeoComply <span class="logo-div">×</span> <span class="jane-name">Jane App</span></span>
+    </div>
+    <div class="header-pills">
+      <div class="pill pill-live"><div class="dot"></div> LIVE SIMULATION</div>
+      <div class="pill pill-blue">HEALTHCARE VERTICAL</div>
+      <div class="pill" style="color:var(--gc-text-dim);border:1px solid var(--gc-border);font-family:var(--font-mono);font-size:10px;padding:5px 13px;">ACV: $80K / 24-MO</div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="nav-tabs">
+    <button class="tab-btn active" onclick="switchTab('simulation',this)">🛡 Live Simulation</button>
+    <button class="tab-btn" onclick="switchTab('journey',this)">👤 User Journey</button>
+
+    <button class="tab-btn" onclick="switchTab('roi',this)">💰 ROI Calculator</button>
+    <button class="tab-btn" onclick="switchTab('risk',this)">⚠️ Risk Assessment</button>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       TAB 1: LIVE SIMULATION
+  ══════════════════════════════════════════════ -->
+  <div id="tab-simulation" class="tab-pane active">
+
+    <div class="section-title">Real-Time Fraud Detection Simulation</div>
+    <div class="section-sub">Select a scenario to see how GeoComply's layered intelligence stops threats that Jane App's IP-only stack leaves undetected.</div>
+
+    <div class="scenario-bar">
+      <button class="sc-btn active-green" onclick="runScenario('legit',this)" id="sc-legit">
+        <div class="sdot" style="background:var(--gc-teal)"></div> Legitimate Clinic Signup
+      </button>
+      <button class="sc-btn" onclick="runScenario('ato',this)" id="sc-ato">
+        <div class="sdot" style="background:var(--gc-amber)"></div> Account Takeover (ATO)
+      </button>
+      <button class="sc-btn" onclick="runScenario('fakeclinic',this)" id="sc-fakeclinic">
+        <div class="sdot" style="background:var(--gc-red)"></div> Fake Clinic Ring
+      </button>
+      <button class="sc-btn" onclick="runScenario('injection',this)" id="sc-injection">
+        <div class="sdot" style="background:var(--gc-red)"></div> Injection Attack (IDV Bypass)
+      </button>
+      <button class="sc-btn" onclick="runScenario('synth',this)" id="sc-synth">
+        <div class="sdot" style="background:var(--gc-red)"></div> Synthetic Identity
+      </button>
+    </div>
+
+    <div class="grid-2" style="margin-bottom:20px;">
+      <!-- Signal Feed -->
+      <div class="card">
+        <div class="card-title">🔵 GeoComply Intelligence Feed</div>
+        <div class="signal-stream" id="signal-feed">
+          <div class="signal-row">
+            <div class="signal-icon">✅</div>
+            <div>
+              <div class="signal-label">System Ready</div>
+              <div class="signal-val">Select a scenario to begin simulation</div>
+            </div>
+            <div class="signal-time">--:--:--</div>
+          </div>
+        </div>
+      </div>
+      <!-- Risk Gauge + Verdict -->
+      <div class="card" style="display:flex;flex-direction:column;align-items:center;justify-content:space-between;">
+        <div class="card-title" style="align-self:flex-start">⚡ RISK ASSESSMENT</div>
+        <div class="risk-gauge-wrap" style="flex:1;justify-content:center;width:100%;">
+          <div class="risk-arc">
+            <canvas id="gaugeCanvas" width="200" height="110"></canvas>
+            <div class="risk-num" id="riskNum" style="color:var(--gc-teal)">0</div>
+          </div>
+          <div class="risk-lbl" id="riskLabel">AWAITING DATA</div>
+        </div>
+        <div id="verdict-box" style="width:100%;padding:14px 16px;background:var(--gc-panel-2);border:1px solid var(--gc-border);border-radius:8px;text-align:center;">
+          <div style="font-size:11px;color:var(--gc-text-dim);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;">Recommendation</div>
+          <div id="verdict-text" style="font-size:14px;font-weight:600;color:var(--gc-text-dim);">Run a scenario</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Layer Status -->
+    <div class="card">
+      <div class="card-title">🔷 LAYER ACTIVATION STATUS</div>
+      <div class="grid-3" style="margin-top:4px;">
+        <div id="layer-core" style="padding:14px;background:var(--gc-panel-2);border:1px solid var(--gc-border);border-radius:8px;transition:all .4s;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+            <div style="width:28px;height:28px;border-radius:7px;background:var(--gc-blue-dim);border:1px solid var(--gc-blue);display:grid;place-items:center;font-size:12px;">🌍</div>
+            <span style="font-size:13px;font-weight:600;">GeoComply Core</span>
+          </div>
+          <div style="font-size:11px;color:var(--gc-text-dim);line-height:1.6;" id="core-status">Device + location triangulation · Building-level precision · Device graph linking</div>
+        </div>
+        <div id="layer-rg" style="padding:14px;background:var(--gc-panel-2);border:1px solid var(--gc-border);border-radius:8px;transition:all .4s;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+            <div style="width:28px;height:28px;border-radius:7px;background:var(--gc-orange-dim);border:1px solid var(--gc-orange);display:grid;place-items:center;font-size:12px;">⚡</div>
+            <span style="font-size:13px;font-weight:600;">RiskGuard</span>
+          </div>
+          <div style="font-size:11px;color:var(--gc-text-dim);line-height:1.6;" id="rg-status">Risk scoring engine · Automated step-up routing · Pre-built ATO models</div>
+        </div>
+        <div id="layer-idc" style="padding:14px;background:var(--gc-panel-2);border:1px solid var(--gc-border);border-radius:8px;transition:all .4s;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+            <div style="width:28px;height:28px;border-radius:7px;background:var(--jane-purple-dim);border:1px solid var(--jane-purple);display:grid;place-items:center;font-size:12px;">🪪</div>
+            <span style="font-size:13px;font-weight:600;">IDComply</span>
+          </div>
+          <div style="font-size:11px;color:var(--gc-text-dim);line-height:1.6;" id="idc-status">Liveness detection · Injection attack blocking · OFAC screening · QR web flow</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- What Jane's current stack sees -->
+    <div class="card" style="margin-top:16px;border-color:rgba(255,59,92,.3);background:rgba(255,59,92,.03);">
+      <div class="card-title" style="color:var(--gc-red);">⛔ WHAT JANE'S CURRENT STACK SEES</div>
+      <div id="jane-current" style="font-size:13px;color:var(--gc-text-dim);line-height:1.7;">Jane's current setup (Stripe IDV + IP-only geolocation + Slack-based manual investigation) would see: <strong style="color:var(--gc-text);">an IP address</strong> — no device fingerprint, no location precision, no injection detection, no case management. Every scenario above except the legitimate user would silently pass through undetected.</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       TAB 2: USER JOURNEY
+  ══════════════════════════════════════════════ -->
+  <div id="tab-journey" class="tab-pane">
+    <div class="section-title">Intelligent KYC: User Journey</div>
+    <div class="section-sub">GeoComply's ground-truth-first architecture. Device + location verified before KYC — every downstream decision built on physics-based, not IP-based, signals.</div>
+
+    <div class="grid-2" style="margin-bottom:20px;">
+      <div>
+        <div class="card-title">SELECT USER PERSONA</div>
+        <div class="scenario-bar" style="flex-direction:column;gap:8px;">
+          <button class="sc-btn active-green" style="justify-content:flex-start;" onclick="setPersona('legit',this)">
+            <span style="font-size:16px;">👩‍⚕️</span> Ryley — Legitimate Physiotherapist
+          </button>
+          <button class="sc-btn" style="justify-content:flex-start;" onclick="setPersona('ato',this)">
+            <span style="font-size:16px;">🎭</span> Attacker — Account Takeover Attempt
+          </button>
+          <button class="sc-btn" style="justify-content:flex-start;" onclick="setPersona('ring',this)">
+            <span style="font-size:16px;">🏭</span> Fraud Ring — Fake Clinic Operation
+          </button>
+          <button class="sc-btn" style="justify-content:flex-start;" onclick="setPersona('inj',this)">
+            <span style="font-size:16px;">💻</span> Sophisticated Actor — Injection Attack
+          </button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">PERSONA PROFILE</div>
+        <div id="persona-profile">
+          <div class="detail-rows">
+            <div class="detail-row"><span class="detail-row-label">Name</span><span class="detail-row-val" id="p-name">Ryley M.</span></div>
+            <div class="detail-row"><span class="detail-row-label">Device</span><span class="detail-row-val" id="p-device">iPhone 15 Pro · Safari</span></div>
+            <div class="detail-row"><span class="detail-row-label">Location</span><span class="detail-row-val" id="p-loc">North Vancouver, BC</span></div>
+            <div class="detail-row"><span class="detail-row-label">IP</span><span class="detail-row-val" id="p-ip">142.58.180.22</span></div>
+            <div class="detail-row"><span class="detail-row-label">Intent</span><span class="detail-row-val" id="p-intent" style="color:var(--gc-teal)">Register physio clinic</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Journey Steps -->
+    <div class="journey-wrap" style="margin-bottom:28px;">
+      <div class="journey-steps" id="j-steps">
+        <div class="j-step done" data-step="0" onclick="selectStep(0)">
+          <div class="j-node">📱</div>
+          <div class="j-label">App Launch + Location Permission</div>
+        </div>
+        <div class="j-step done" data-step="1" onclick="selectStep(1)">
+          <div class="j-node">🌍</div>
+          <div class="j-label">Core SDK · Device + Geo</div>
+        </div>
+        <div class="j-step active" data-step="2" onclick="selectStep(2)">
+          <div class="j-node">⚡</div>
+          <div class="j-label">RiskGuard Scoring</div>
+        </div>
+        <div class="j-step" data-step="3" onclick="selectStep(3)">
+          <div class="j-node">🪪</div>
+          <div class="j-label">IDComply Step-Up</div>
+        </div>
+        <div class="j-step" data-step="4" onclick="selectStep(4)">
+          <div class="j-node">✅</div>
+          <div class="j-label">Account Created</div>
+        </div>
+        <div class="j-step" data-step="5" onclick="selectStep(5)">
+          <div class="j-node">💳</div>
+          <div class="j-label">Jane Payments Onboard</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step Detail Panel -->
+    <div class="detail-panel" id="j-detail">
+      <h3 id="j-detail-title">⚡ RiskGuard Scoring</h3>
+      <div class="grid-2" style="gap:16px;">
+        <div>
+          <div style="font-size:11px;color:var(--gc-text-dim);letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px;">SIGNALS EVALUATED</div>
+          <div class="detail-rows" id="j-signals"></div>
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--gc-text-dim);letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px;">OUTCOME</div>
+          <div id="j-outcome" style="font-size:13px;line-height:1.7;color:var(--gc-text-dim);"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Jane's Gap -->
+    <div class="gap-banner" style="margin-top:20px;">
+      <div class="gap-icon">⚠️</div>
+      <div>
+        <div class="gap-title">Critical Gap — Ariella's Identity Split Problem</div>
+        <div class="gap-desc" id="gap-msg">Jane allows a user to create a Jane account with one identity and a Jane Payments account with a completely different identity. The only detection is a manual name/email correlation check. GeoComply Core + IDComply running at account creation closes this permanently — before any payment instrument is ever added.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPETITIVE ANALYSIS REMOVED -->
+  <div id="tab-competitive" class="tab-pane" style="display:none!important"></div>
+
+  <!-- ══════════════════════════════════════════════
+       TAB 4: ROI CALCULATOR
+  ══════════════════════════════════════════════ -->
+  <div id="tab-roi" class="tab-pane">
+    <div class="section-title">ROI & Business Case</div>
+    <div class="section-sub">Based on Jane's 65,000 clinics, 3-person fraud team, and current manual investigation burden. All estimates are conservative — based on healthcare SaaS benchmarks and Jane's disclosed operational profile.</div>
+
+    <div class="grid-4" style="margin-bottom:24px;">
+      <div class="metric">
+        <div class="metric-label">Annual Fraud Loss (Est.)</div>
+        <div class="metric-val val-red" id="roi-fraud">$1.2M</div>
+        <div class="metric-sub">Healthcare SaaS avg 1.8% of GMV</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Investigation Hours Saved</div>
+        <div class="metric-val val-teal" id="roi-hours">2,400 hrs</div>
+        <div class="metric-sub">Per year with CMS automation</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">False Positive Reduction</div>
+        <div class="metric-val val-blue" id="roi-fp">~70%</div>
+        <div class="metric-sub">Triage hours freed</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">First-Year ROI</div>
+        <div class="metric-val val-orange" id="roi-return">14.8×</div>
+        <div class="metric-sub">vs. $80K ACV investment</div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">IMPACT BREAKDOWN</div>
+
+        <div class="roi-row">
+          <div class="roi-header">
+            <span class="roi-label">Fraud loss prevention</span>
+            <span class="roi-val" style="color:var(--gc-teal);">$840K / yr</span>
+          </div>
+          <div class="roi-track"><div class="roi-fill" style="background:var(--gc-teal);" data-width="70"></div></div>
+        </div>
+
+        <div class="roi-row">
+          <div class="roi-header">
+            <span class="roi-label">Manual investigation cost reduction</span>
+            <span class="roi-val" style="color:var(--gc-blue);">$216K / yr</span>
+          </div>
+          <div class="roi-track"><div class="roi-fill" style="background:var(--gc-blue);" data-width="54"></div></div>
+        </div>
+
+        <div class="roi-row">
+          <div class="roi-header">
+            <span class="roi-label">Chargeback & dispute reduction</span>
+            <span class="roi-val" style="color:var(--gc-orange);">$180K / yr</span>
+          </div>
+          <div class="roi-track"><div class="roi-fill" style="background:var(--gc-orange);" data-width="45"></div></div>
+        </div>
+
+        <div class="roi-row">
+          <div class="roi-header">
+            <span class="roi-label">Stripe IDV replacement savings</span>
+            <span class="roi-val" style="color:var(--gc-amber);">$96K / yr</span>
+          </div>
+          <div class="roi-track"><div class="roi-fill" style="background:var(--gc-amber);" data-width="24"></div></div>
+        </div>
+
+        <div class="roi-row">
+          <div class="roi-header">
+            <span class="roi-label">Regulatory fine avoidance (PHI)</span>
+            <span class="roi-val" style="color:#A78BFA);">$120K / yr</span>
+          </div>
+          <div class="roi-track"><div class="roi-fill" style="background:#7C3AED;" data-width="30"></div></div>
+        </div>
+
+        <div class="divider"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:14px;font-weight:700;">Total Annual Value</span>
+          <span style="font-size:22px;font-weight:800;color:var(--gc-teal);">$1.45M</span>
+        </div>
+        <div style="font-size:12px;color:var(--gc-text-dim);text-align:right;margin-top:4px;">vs. $80K ACV = <strong style="color:var(--gc-orange);">18.1× ROI</strong></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">JANE'S OPERATIONAL PROFILE</div>
+        <div class="detail-rows" style="gap:12px;">
+          <div class="detail-row"><span class="detail-row-label">Active clinics</span><span class="detail-row-val">65,000</span></div>
+          <div class="detail-row"><span class="detail-row-label">Fraud team size</span><span class="detail-row-val">2–5 people</span></div>
+          <div class="detail-row"><span class="detail-row-label">Current IDV vendor</span><span class="detail-row-val" style="color:var(--gc-amber);">Stripe (opaque rejections)</span></div>
+          <div class="detail-row"><span class="detail-row-label">Case management</span><span class="detail-row-val" style="color:var(--gc-red);">Slack (no history)</span></div>
+          <div class="detail-row"><span class="detail-row-label">Rules engine</span><span class="detail-row-val" style="color:var(--gc-red);">Internal (no dev capacity)</span></div>
+          <div class="detail-row"><span class="detail-row-label">Geolocation today</span><span class="detail-row-val" style="color:var(--gc-red);">IP only (no value)</span></div>
+          <div class="detail-row"><span class="detail-row-label">Investigation workflow</span><span class="detail-row-val" style="color:var(--gc-red);">100% manual</span></div>
+          <div class="detail-row"><span class="detail-row-label">Markets</span><span class="detail-row-val">US, UK, Canada, 53 others</span></div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="card-title">PAYBACK PERIOD</div>
+        <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:6px;">
+          <span style="font-size:36px;font-weight:800;color:var(--gc-blue);">24</span>
+          <span style="font-size:14px;color:var(--gc-text-dim);">days to breakeven</span>
+        </div>
+        <div style="font-size:12px;color:var(--gc-text-dim);line-height:1.6;">Based on the first major fraud ring detection. Power Map surfaces synthetic clinic networks in 72 hours — one blocked ring pays for a full year of deployment.</div>
+
+        <div style="margin-top:16px;" class="gap-banner">
+          <div class="gap-icon">💡</div>
+          <div>
+            <div class="gap-title" style="color:var(--gc-blue);">GeoGuard IP POC Fast-Win</div>
+            <div class="gap-desc">72-hour turnaround on the GeoGuard IP POC Ryley requested (50% blind / 50% labelled data). This is the door-opener that turns the technical relationship real before the Part 2 session.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       TAB 5: RISK ASSESSMENT
+  ══════════════════════════════════════════════ -->
+  <div id="tab-risk" class="tab-pane">
+    <div class="section-title">Risk Assessment — Jane App Platform</div>
+    <div class="section-sub">Inherent fraud risks facing Jane's platform across its three user populations: clinics, patients, and providers. Based on healthcare SaaS threat intelligence and Jane's disclosed operational profile.</div>
+
+    <div class="grid-4" style="margin-bottom:24px;">
+      <div class="metric"><div class="metric-label">Critical Risks</div><div class="metric-val val-red">4</div><div class="metric-sub">Unmitigated today</div></div>
+      <div class="metric"><div class="metric-label">High Risks</div><div class="metric-val val-amber">3</div><div class="metric-sub">Partially mitigated</div></div>
+      <div class="metric"><div class="metric-label">Medium Risks</div><div class="metric-val val-blue">5</div><div class="metric-sub">Limited coverage</div></div>
+      <div class="metric"><div class="metric-label">PHI Exposure</div><div class="metric-val val-orange">65K</div><div class="metric-sub">Clinics with PHI at risk</div></div>
+    </div>
+
+    <div class="grid-2">
+      <div>
+        <div style="font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--gc-red);margin-bottom:14px;">🔴 CRITICAL — UNMITIGATED</div>
+
+        <div class="risk-item">
+          <div class="risk-sev risk-sev-high">C</div>
+          <div>
+            <div class="risk-title">Account Takeover (ATO) on PHI-Rich Accounts</div>
+            <div class="risk-desc">Credential stuffing + social engineering targeting clinic accounts storing protected health information and insurance billing data. No device affinity profiles. New device from different country = zero detection today.</div>
+            <div class="badge badge-red risk-tag">GeoComply Core → ATO detection pre-action</div>
+          </div>
+        </div>
+
+        <div class="risk-item">
+          <div class="risk-sev risk-sev-high">C</div>
+          <div>
+            <div class="risk-title">Injection Attack IDV Bypass</div>
+            <div class="risk-desc">Fraudsters bypass camera entirely, injecting synthetic document images directly into the API stream. Stripe's IDV has no injection detection — a barcode check cannot detect this. This vector is completely invisible to Jane today.</div>
+            <div class="badge badge-red risk-tag">IDComply → injection signal detection + liveness</div>
+          </div>
+        </div>
+
+        <div class="risk-item">
+          <div class="risk-sev risk-sev-high">C</div>
+          <div>
+            <div class="risk-title">Fraud Farm / Synthetic Clinic Network</div>
+            <div class="risk-desc">Coordinated fake clinic creation from single physical location using rotating device IDs and synthetic identities. Power Map surfaces entire ring once location is tied — but Jane has zero coordinate-level visibility today.</div>
+            <div class="badge badge-red risk-tag">Core Power Map → physical location clustering</div>
+          </div>
+        </div>
+
+        <div class="risk-item">
+          <div class="risk-sev risk-sev-high">C</div>
+          <div>
+            <div class="risk-title">Identity Split (Jane ↔ Jane Payments)</div>
+            <div class="risk-desc">User creates Jane account with Identity A, then Jane Payments account with Identity B. Only detection is manual name/email correlation. This is an explicit gap identified by Ariella Kaplan (Payments).</div>
+            <div class="badge badge-red risk-tag">Core + IDComply → unified identity at account creation</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--gc-amber);margin-bottom:14px;">🟡 HIGH — PARTIALLY MITIGATED</div>
+
+        <div class="risk-item">
+          <div class="risk-sev risk-sev-med">H</div>
+          <div>
+            <div class="risk-title">False Positive Overload / Investigation Capacity</div>
+            <div class="risk-desc">Rule engine too broad — maxes out the team at 4–5 people per hard case. Ryley described it as "so bare bones and manual." Zero automation. Team is entirely reactive, no proactive queue management.</div>
+            <div class="badge badge-amber risk-tag">RiskGuard → pre-built models, automated triage</div>
+          </div>
+        </div>
+
+        <div class="risk-item">
+          <div class="risk-sev risk-sev-med">H</div>
+          <div>
+            <div class="risk-title">No Case History — Recidivist Detection Gap</div>
+            <div class="risk-desc">Closed cases tracked in Slack. A banned user who re-offends from a new account surfaces as a fresh unknown. No linkage to prior fraud history, no resurfacing on new risk signals.</div>
+            <div class="badge badge-amber risk-tag">Explorer CMS → closed cases resurface on new signals</div>
+          </div>
+        </div>
+
+        <div class="risk-item">
+          <div class="risk-sev risk-sev-med">H</div>
+          <div>
+            <div class="risk-title">Opaque IDV Rejections — Cannot Refine Logic</div>
+            <div class="risk-desc">Stripe's IDV returns rejections without explaining why — impossible to distinguish false positives from true fraud or refine decision logic. Ryley explicitly said she's "not super happy with it."</div>
+            <div class="badge badge-amber risk-tag">IDComply → transparent rejection reasons + signals</div>
+          </div>
+        </div>
+
+        <div style="font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--gc-blue);margin-bottom:14px;margin-top:18px;">🔵 MEDIUM — LIMITED COVERAGE</div>
+
+        <div class="risk-item">
+          <div class="risk-sev" style="background:var(--gc-blue-dim);color:var(--gc-blue);border:1px solid rgba(0,65,237,.3);">M</div>
+          <div>
+            <div class="risk-title">GDPR / UK GDPR Passive Collection Risk</div>
+            <div class="risk-desc">UK/EU markets require explicit informed consent for device-level location. Silent SDK collection is non-compliant. Jane needs a value-exchange consent moment — the "Add an Account" nearby clinic flow is the right architecture.</div>
+            <div class="badge badge-blue risk-tag">Core GDPR consent architecture → compliant by design</div>
+          </div>
+        </div>
+
+        <div class="risk-item">
+          <div class="risk-sev" style="background:var(--gc-blue-dim);color:var(--gc-blue);border:1px solid rgba(0,65,237,.3);">M</div>
+          <div>
+            <div class="risk-title">Subscription / Payment Fraud (Fake Clinic Onboarding)</div>
+            <div class="risk-desc">Fraudulent clinic onboarding to exploit the platform — using fake or stolen business credentials to access Jane Payments capabilities. No pre-KYC device or location check today.</div>
+            <div class="badge badge-blue risk-tag">Core + RiskGuard → pre-KYC ground truth first</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GAP ANALYSIS REMOVED -->
+  <div id="tab-gaps" class="tab-pane" style="display:none!important">
+    <div class="section-title">Honest Gap Analysis</div>
+    <div class="section-sub">Ryley Eakin is a former GeoComply FARM employee — she knows the stack intimately. Acknowledged gaps must be addressed directly in the Part 2 engineering session. No papering over.</div>
+
+    <div class="grid-2" style="margin-bottom:20px;">
+      <div>
+        <div class="gap-banner" style="background:rgba(255,59,92,.05);border-color:rgba(255,59,92,.25);margin-bottom:12px;">
+          <div class="gap-icon">🔴</div>
+          <div>
+            <div class="gap-title" style="color:var(--gc-red);">CRITICAL — Demo Environment Reliability</div>
+            <div class="gap-desc">Demo failures in the Feb 24 large-group session with Ariella and Kelsey stalled deal progress for 5+ weeks. Ryley's team is currently self-servicing — testing independently, putting GeoComply behind competitors. Part 2 engineering session CANNOT have failures. Ryley considers this "industry standard." Requires exec visibility.</div>
+          </div>
+        </div>
+
+        <div class="gap-banner" style="background:rgba(255,184,48,.05);border-color:rgba(255,184,48,.25);margin-bottom:12px;">
+          <div class="gap-icon">🟡</div>
+          <div>
+            <div class="gap-title">HIGH — Slack Integration for CMS Alerts</div>
+            <div class="gap-desc">Ryley was explicit: "we need alerts in Slack in real time — it's not feasible for our team to monitor a separate system." A workaround exists but requires GeoComply dev support. This is a non-negotiable — if unresolved, the deal doesn't work for their team. Status: open item for Ian Crowe (Solutions Architect).</div>
+          </div>
+        </div>
+
+        <div class="gap-banner" style="background:rgba(0,65,237,.05);border-color:rgba(0,65,237,.2);">
+          <div class="gap-icon">🔵</div>
+          <div>
+            <div class="gap-title" style="color:var(--gc-blue);">MEDIUM — Global KYC Coverage (India, etc.)</div>
+            <div class="gap-desc">IDComply is not competitive across all 56 of Jane's markets — notably India (data sources not mature enough). GeoComply should not position as a single-vendor global KYC solution. The recommended architecture: GeoComply Core everywhere + country-specific IDV vendors where IDComply doesn't have sufficient coverage. This was disclosed honestly to Ryley — she responded positively to the candor.</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <div class="card-title">DEAL STAGE & NEXT STEPS</div>
+          <div class="timeline">
+            <div class="tl-item done">
+              <div class="tl-dot"></div>
+              <div class="tl-date">JAN 22, 2026</div>
+              <div class="tl-title">Intro Call — Intelligent KYC Framework Aligned</div>
+              <div class="tl-desc">Ryley + Ariella + Kelsey. Jane Payments / Stripe gap confirmed as primary use case.</div>
+            </div>
+            <div class="tl-item done">
+              <div class="tl-dot"></div>
+              <div class="tl-date">FEB 24, 2026</div>
+              <div class="tl-title">Technical Deep-Dive — Demo Failures Stall Progress</div>
+              <div class="tl-desc">IDComply + Core session. Environment failures create 5-week setback.</div>
+            </div>
+            <div class="tl-item done">
+              <div class="tl-dot"></div>
+              <div class="tl-date">MAR 9, 2026</div>
+              <div class="tl-title">Recovery Call — Candid Competitive Gaps Disclosed</div>
+              <div class="tl-desc">Ryley/Ash smaller group. Honest gaps acknowledged. Deal re-opened. NDA details requested.</div>
+            </div>
+            <div class="tl-item done">
+              <div class="tl-dot"></div>
+              <div class="tl-date">MAR 24, 2026</div>
+              <div class="tl-title">"Add an Account" Location Integration Confirmed</div>
+              <div class="tl-desc">Ash identifies the strategic integration point. Ryley confirms it's already in testing in BC cities. NDA signatory details provided.</div>
+            </div>
+            <div class="tl-item active">
+              <div class="tl-dot"></div>
+              <div class="tl-date">NOW — APR 2026</div>
+              <div class="tl-title">NDA Signature Pending · GeoGuard POC Ready</div>
+              <div class="tl-desc">Jonathan Friesen (Ops Director) has the MNDA via Ironclad. One AI tools clause comment resolved. GeoGuard IP POC checklist shared — 72-hour turnaround.</div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot"></div>
+              <div class="tl-date">NEXT</div>
+              <div class="tl-title">Part 2 Engineering Deep-Dive</div>
+              <div class="tl-desc">Core + RiskGuard + IDComply architecture walkthrough. "Add an Account" integration. Stable demo environment mandatory. Slack integration confirmed before session.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px;">
+          <div class="card-title">DEAL HEALTH SCORECARD</div>
+          <div class="detail-rows">
+            <div class="detail-row">
+              <span class="detail-row-label">Champion strength (Ryley)</span>
+              <span><span class="badge badge-teal">STRONG</span></span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-row-label">NDA status</span>
+              <span><span class="badge badge-amber">PENDING SIG</span></span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-row-label">Technical alignment</span>
+              <span><span class="badge badge-teal">CONFIRMED</span></span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-row-label">Demo environment</span>
+              <span><span class="badge badge-red">CRITICAL RISK</span></span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-row-label">Slack integration</span>
+              <span><span class="badge badge-amber">OPEN ITEM</span></span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-row-label">Competitive positioning</span>
+              <span><span class="badge badge-teal">DIFFERENTIATED</span></span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-row-label">Budget confirmed</span>
+              <span><span class="badge badge-blue">$80K ACV</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<script>
+// ─── TAB SWITCHING ───────────────────────────────────────
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'roi') animateROI();
+}
+
+// ─── GAUGE DRAWING ───────────────────────────────────────
+function drawGauge(score, color) {
+  const canvas = document.getElementById('gaugeCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, 200, 110);
+  const cx = 100, cy = 100, r = 80;
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, Math.PI, 0);
+  ctx.strokeStyle = '#1A1A4A';
+  ctx.lineWidth = 14;
+  ctx.lineCap = 'round';
+  ctx.stroke();
+  const pct = score / 100;
+  const endAngle = Math.PI + (pct * Math.PI);
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, Math.PI, endAngle);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 14;
+  ctx.lineCap = 'round';
+  ctx.stroke();
+}
+
+function animateGauge(target, color) {
+  let current = 0;
+  const numEl = document.getElementById('riskNum');
+  numEl.style.color = color;
+  const timer = setInterval(() => {
+    current += Math.ceil((target - current) / 6);
+    if (current >= target) { current = target; clearInterval(timer); }
+    drawGauge(current, color);
+    numEl.textContent = current;
+  }, 30);
+}
+
+// ─── SIGNAL FEED ─────────────────────────────────────────
+function addSignal(icon, label, val, color, delay) {
+  setTimeout(() => {
+    const feed = document.getElementById('signal-feed');
+    const row = document.createElement('div');
+    row.className = 'signal-row';
+    if (color) row.style.borderColor = color + '44';
+    const now = new Date();
+    const ts = now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0')+':'+now.getSeconds().toString().padStart(2,'0');
+    row.innerHTML = `<div class="signal-icon">${icon}</div><div><div class="signal-label">${label}</div><div class="signal-val">${val}</div></div><div class="signal-time">${ts}</div>`;
+    feed.insertBefore(row, feed.firstChild);
+    if (feed.children.length > 12) feed.removeChild(feed.lastChild);
+  }, delay);
+}
+
+// ─── SCENARIOS ───────────────────────────────────────────
+const scenarios = {
+  legit: {
+    signals: [
+      [0,   '✅','DEVICE',     'iPhone 15 Pro · iOS 17 · Clean fingerprint · No emulation detected','#00CD91'],
+      [600, '🌍','GEOLOCATION','North Vancouver, BC · 49.3246°N 123.0724°W · GPS+WiFi+Cell triangulated','#00CD91'],
+      [1200,'🔗','DEVICE GRAPH','No linked accounts at this location · No prior fraud signals · New device','#00CD91'],
+      [1800,'⚡','RISKGUARD',  'Confidence score: 8/100 · Low risk · No ATO indicators · Email 8mo old · Phone verified','#00CD91'],
+      [2400,'✅','DECISION',   'FAST-TRACK → Account creation approved · IDComply step-up NOT triggered','#00CD91'],
+    ],
+    score: 8, color: '#00CD91',
+    verdict: '✅ Approved — Fast-track. Good user, zero friction.',
+    label: 'LOW RISK',
+    coreStyle: 'teal', rgStyle: 'teal', idcStyle: 'gray',
+    janeText: 'Jane sees: an IP address in North Vancouver. Would also approve — but only because they got lucky, not because they verified anything.'
+  },
+  ato: {
+    signals: [
+      [0,   '📱','DEVICE',     'Samsung Galaxy S22 · Android · DIFFERENT from account\'s registered iPhone 15','#FFB830'],
+      [600, '🌍','GEOLOCATION','Lagos, Nigeria · 6.5244°N 3.3792°E · 14,200 km from account home location','#FF3B5C'],
+      [1200,'🔗','AFFINITY PROFILE','ALERT: Trusted device + location profile VIOLATED · New device + foreign country','#FF3B5C'],
+      [1800,'⚡','RISKGUARD',  'Confidence score: 91/100 · CRITICAL · ATO model triggered · Pre-action block initiated','#FF3B5C'],
+      [2400,'🔐','DECISION',   'BLOCK → Account access denied before any action · Step-up challenge issued · Alert fired','#FF3B5C'],
+    ],
+    score: 91, color: '#FF3B5C',
+    verdict: '🚨 Blocked — ATO detected pre-action. Money protected.',
+    label: 'CRITICAL RISK',
+    coreStyle: 'red', rgStyle: 'red', idcStyle: 'amber',
+    janeText: 'Jane sees: a different IP address. Login proceeds normally. Account compromised. Attacker accesses PHI, insurance data, and payment methods. No alert fired.'
+  },
+  fakeclinic: {
+    signals: [
+      [0,   '🏭','DEVICE',     'Device ID #4471 · Android · OS-level location spoofing detected · VM indicators','#FF3B5C'],
+      [600, '🌍','POWER MAP',  'Physical coordinates: 33 Spadina Ave, Toronto · 47 other accounts from SAME building','#FF3B5C'],
+      [1200,'🔗','FRAUD RING', 'RING IDENTIFIED → 47 linked accounts · 12 cycling device IDs · 3 IP addresses used','#FF3B5C'],
+      [1800,'🗺️','GEOFENCE',   'Coordinate polygon set around 33 Spadina Ave · All future activity from this zone → auto-block','#FF3B5C'],
+      [2400,'⚡','RISKGUARD',  'Confidence score: 99/100 · FRAUD RING · All 47 accounts suspended · Case created in CMS','#FF3B5C'],
+    ],
+    score: 99, color: '#FF3B5C',
+    verdict: '🚨 Fraud Ring Neutralized — 47 fake clinics blocked.',
+    label: 'FRAUD RING',
+    coreStyle: 'red', rgStyle: 'red', idcStyle: 'red',
+    janeText: 'Jane sees: 47 accounts with different IPs, different names, different emails. Each one passes independently. Fraud ring operates undetected. False clinics bill insurance, drain Jane Payments float.'
+  },
+  injection: {
+    signals: [
+      [0,   '💻','DEVICE ENV', 'ALERT: Virtual machine detected · Headless browser indicators · No real camera access','#FF3B5C'],
+      [600, '🌍','LOCATION',   'Location data: manipulated OS-level coordinates · Physical location UNVERIFIABLE','#FF3B5C'],
+      [1200,'🛑','CORE GATE',  'PRE-IDV BLOCK → Suspicious device posture flagged before document capture · Reduces attack surface','#FF600F'],
+      [1800,'🪪','IDCOMPLY',   'If reached: injection signal detected · Document image not captured by real camera · Liveness FAIL','#FF3B5C'],
+      [2400,'⚡','DECISION',   'BLOCKED at device layer · Never reaches IDComply · Zero IDV cost incurred for attack attempt','#FF3B5C'],
+    ],
+    score: 96, color: '#FF3B5C',
+    verdict: '🚨 Injection Attack Stopped — Blocked at device layer.',
+    label: 'CRITICAL THREAT',
+    coreStyle: 'red', rgStyle: 'red', idcStyle: 'red',
+    janeText: "Jane sees: an IDV submission via Stripe. Stripe's barcode scan validates internal data consistency. No injection detection. No liveness check. Synthetic identity created. Access granted."
+  },
+  synth: {
+    signals: [
+      [0,   '📧','EMAIL RISK', 'Email address created 43 seconds before account creation · High-risk pattern','#FFB830'],
+      [600, '📱','PHONE',      'VoIP number · Not associated with real carrier subscriber · Burner indicators','#FFB830'],
+      [1200,'🌍','LOCATION',   'IP proxied via datacenter · Core detects: no matching physical GPS/WiFi signal','#FF3B5C'],
+      [1800,'🪪','IDCOMPLY',   'Step-up triggered by RiskGuard · Document capture → photosynthesis attack detected · Fabricated ID','#FF3B5C'],
+      [2400,'🔴','DECISION',   'BLOCKED → Synthetic identity confirmed · OFAC check clear but document fraud confirmed','#FF3B5C'],
+    ],
+    score: 88, color: '#FF3B5C',
+    verdict: '🚨 Synthetic Identity Blocked — Fabricated ID detected.',
+    label: 'HIGH RISK',
+    coreStyle: 'amber', rgStyle: 'red', idcStyle: 'red',
+    janeText: 'Jane sees: a normal sign-up flow. Stripe IDV receives a high-quality fabricated document. Barcode check passes. Account created. Synthetic identity gains access to healthcare platform.'
+  }
+};
+
+function runScenario(key, btn) {
+  const sc = scenarios[key];
+  document.querySelectorAll('.sc-btn').forEach(b => b.className = 'sc-btn');
+  const colorMap = { legit: 'active-green', ato: 'active-amber', fakeclinic: 'active-red', injection: 'active-red', synth: 'active-red' };
+  btn.classList.add(colorMap[key]);
+
+  const feed = document.getElementById('signal-feed');
+  feed.innerHTML = '';
+
+  sc.signals.forEach(([delay, icon, label, val, color]) => {
+    addSignal(icon, label, val, color, delay);
+  });
+
+  const totalDelay = sc.signals[sc.signals.length-1][0] + 600;
+  setTimeout(() => {
+    animateGauge(sc.score, sc.color);
+    document.getElementById('riskLabel').textContent = sc.label;
+    document.getElementById('verdict-text').textContent = sc.verdict;
+    document.getElementById('verdict-text').style.color = sc.color;
+    document.getElementById('jane-current').innerHTML = `<strong style="color:${sc.color}">Jane's current stack:</strong> ${sc.janeText}`;
+  }, totalDelay);
+
+  // Layer highlights
+  const layerColors = { teal: 'rgba(0,205,145,.12)', red: 'rgba(255,59,92,.12)', amber: 'rgba(255,184,48,.12)', gray: 'var(--gc-panel-2)' };
+  const borderColors = { teal: 'rgba(0,205,145,.4)', red: 'rgba(255,59,92,.4)', amber: 'rgba(255,184,48,.4)', gray: 'var(--gc-border)' };
+  ['core','rg','idc'].forEach((l, i) => {
+    const style = [sc.coreStyle, sc.rgStyle, sc.idcStyle][i];
+    const el = document.getElementById('layer-'+l);
+    setTimeout(() => {
+      el.style.background = layerColors[style];
+      el.style.borderColor = borderColors[style];
+    }, 400 * (i+1));
+  });
+}
+
+// ─── USER JOURNEY ─────────────────────────────────────────
+const personaData = {
+  legit: {
+    name:'Ryley M.', device:'iPhone 15 Pro · Safari', loc:'North Vancouver, BC', ip:'142.58.180.22', intent:'Register physio clinic',
+    steps: {
+      0: { title:'📱 App Launch + "Add an Account"', sigs:[['Location permission prompt','Nearby clinic discovery — value-exchange consent moment (GDPR-compliant)'],['User grants location','Voluntary consent in exchange for clear benefit · No passive collection']], outcome:'<span style="color:var(--gc-teal)">Location permission granted ✓</span><br>Core SDK activated. This is the "Add an Account" entry point Ash identified — Jane is already building this. Perfect integration moment.' },
+      1: { title:'🌍 Core SDK — Device + Geo Verification', sigs:[['GPS+WiFi+Cell triangulation','49.3246°N 123.0724°W · Building-level accuracy'],['Device fingerprint','iPhone 15 Pro · Clean · No emulation · No VPN'],['Location history','First visit to this coordinate cluster']], outcome:'<span style="color:var(--gc-teal)">Ground truth established ✓</span><br>Physics-based verification complete. Every downstream decision now built on trusted data.' },
+      2: { title:'⚡ RiskGuard Confidence Scoring', sigs:[['Confidence score','8/100 — Low risk'],['ATO model','No device anomalies · Home location match'],['Email age','8 months — established'],['Phone','Carrier-verified number']], outcome:'<span style="color:var(--gc-teal)">Fast-track ✓</span><br>Low risk user. IDComply step-up NOT triggered. Zero friction for legitimate users — core Jane product principle respected.' },
+      3: { title:'🪪 IDComply (NOT triggered — low risk)', sigs:[['Trigger condition','Only fires for flagged users'],['For Ryley','Score 8/100 — below step-up threshold'],['Design principle','Good users never see IDComply']], outcome:'<span style="color:var(--gc-teal)">Step-up skipped ✓</span><br>IDComply only triggers on high-risk users. Frictionless UX preserved — a core Jane product principle (Ryley was explicit about this).' },
+      4: { title:'✅ Jane Account Created', sigs:[['Identity','Verified once — at creation'],['Device','Bound to account profile'],['Location','Affinity profile initialized']], outcome:'<span style="color:var(--gc-teal)">Account live ✓</span><br>ATO protection active from day one. Any future login from a new device + distant location triggers step-up automatically.' },
+      5: { title:'💳 Jane Payments Onboarding', sigs:[['Identity match','Jane account identity matches Payments identity — gap CLOSED'],['Ariella\'s gap','No longer possible to use different identity for payments'],['Verification','Completed once at Jane account creation · Not repeated']], outcome:'<span style="color:var(--gc-teal)">Identity gap closed ✓</span><br>The critical gap Ariella identified is permanently sealed. One unified identity across Jane and Jane Payments, verified once, at the beginning.' }
+    }
+  },
+  ato: {
+    name:'Attacker (using Ryley\'s credentials)', device:'Samsung Galaxy S22 · Chrome', loc:'Lagos, Nigeria', ip:'41.203.45.112 (VPN)', intent:'Account takeover — access PHI + billing',
+    steps: {
+      0: { title:'📱 App Launch + Login Attempt', sigs:[['Device','New device — no prior affinity with account'],['Location','Lagos, Nigeria · 14,200 km from home location'],['Session type','Direct login attempt with valid credentials']], outcome:'<span style="color:var(--gc-amber)">⚠️ Pre-action monitoring initiated</span><br>Core begins building affinity violation before login completes.' },
+      1: { title:'🌍 Core — Affinity Profile Violation', sigs:[['Registered device','iPhone 15 Pro · North Vancouver, BC'],['Current device','Samsung Galaxy S22 · Lagos, Nigeria'],['Violation','New device + new continent = clear ATO pattern']], outcome:'<span style="color:var(--gc-red)">🚨 ATO flag raised</span><br>Trusted device + location affinity violated. Pre-action block initiated BEFORE any account access occurs.' },
+      2: { title:'⚡ RiskGuard — CRITICAL Alert', sigs:[['Confidence score','91/100 — Critical'],['ATO model','Triggered: device change + location change + time anomaly'],['Action','Pre-action block + step-up challenge']], outcome:'<span style="color:var(--gc-red)">🚨 Blocked at RiskGuard</span><br>Account access denied. Step-up challenge issued to real account owner. CMS case created automatically.' },
+      3: { title:'🪪 IDComply Step-Up Issued', sigs:[['Challenge sent to','Registered phone number of real account owner'],['Attacker cannot pass','No access to real owner\'s biometrics'],['Liveness required','Real camera capture — injection impossible']], outcome:'<span style="color:var(--gc-red)">🚨 Attack fails at IDComply</span><br>Attacker cannot complete liveness check. Account locked pending owner verification.' },
+      4: { title:'⛔ Account Access Denied', sigs:[['Outcome','Login blocked · Account integrity preserved'],['PHI','Protected — no access granted'],['Real owner','Alerted via registered contact method']], outcome:'<span style="color:var(--gc-teal)">Account protected ✓</span><br>PHI secure. Billing data protected. Real account owner notified. CMS case logged for investigation.' },
+      5: { title:'📊 CMS Case + Explorer Log', sigs:[['Case created','Automatic — no manual Slack required'],['Device logged','Attacker device fingerprint stored'],['Pattern link','Any future attempt from same device cluster → instant flag']], outcome:'<span style="color:var(--gc-teal)">Intelligence captured ✓</span><br>Attack pattern stored. Future attempts from linked device IDs will be flagged instantly — even from new accounts.' }
+    }
+  },
+  ring: {
+    name:'Fraud Operation (47 fake clinics)', device:'Multiple devices · Location spoofer active', loc:'33 Spadina Ave, Toronto (single fraud farm)', ip:'Multiple proxied IPs (cycling)',
+    steps: {
+      0: { title:'📱 App Launch — Device #1 of 47', sigs:[['Device','Android · OS-level location spoofer detected'],['IP','Proxied datacenter IP'],['Apparent location','Claims to be in Calgary']], outcome:'<span style="color:var(--gc-amber)">⚠️ Suspicious device environment</span><br>Core detects location spoofer. Physical GPS doesn\'t match IP claim.' },
+      1: { title:'🌍 Core — Physical Location Exposed', sigs:[['Claimed location','Calgary, AB (via IP)'],['Actual coordinates','33 Spadina Ave, Toronto — GPS+WiFi triangulation'],['Pattern','11 prior accounts from same building coordinate']], outcome:'<span style="color:var(--gc-red)">🚨 Fraud farm detected</span><br>Real physical location exposed despite IP proxying. Power Map activates.' },
+      2: { title:'⚡ RiskGuard + Power Map', sigs:[['Linked accounts','47 accounts from same physical address'],['Device IDs','12 unique device IDs — cycling pattern'],['Ring score','99/100 — Organized fraud']], outcome:'<span style="color:var(--gc-red)">🚨 Ring neutralized</span><br>All 47 accounts suspended simultaneously. CMS case created with full network map.' },
+      3: { title:'🗺️ Geo-Block Applied', sigs:[['Coordinate polygon','Set around 33 Spadina Ave, Toronto'],['Effect','All future accounts + transactions from this physical zone → auto-block'],['Duration','Indefinite — until manual review']], outcome:'<span style="color:var(--gc-red)">🚨 Location blocked</span><br>Physical address permanently flagged. New accounts from this location blocked automatically — no matter how many device IDs are cycled.' },
+      4: { title:'⛔ All 47 Clinics Suspended', sigs:[['Accounts blocked','47'],['Insurance claims voided','Pending review'],['Jane Payments float','Protected — no withdrawals processed']], outcome:'<span style="color:var(--gc-teal)">Fraud ring neutralized ✓</span><br>Entire operation dismantled. Explorer retains full network graph — any future attempt linked to same location or device cluster instantly flagged.' },
+      5: { title:'📊 Intelligence Network Built', sigs:[['Location fingerprint','Stored permanently'],['Device cluster','12 IDs linked — all future use flagged'],['Value','First ring pays for 1+ years of GeoComply deployment']], outcome:'<span style="color:var(--gc-teal)">Compound intelligence ✓</span><br>Each blocked fraud ring makes the system smarter. Subsequent rings detected in seconds, not weeks.' }
+    }
+  },
+  inj: {
+    name:'Sophisticated Actor (injection attack)', device:'Emulator / Virtual Machine', loc:'Unverifiable (manipulated)', ip:'Residential proxy (rented)',
+    steps: {
+      0: { title:'📱 App Launch — Emulated Environment', sigs:[['Device type','Virtual machine / Android emulator'],['Camera','No real camera hardware — API injection possible'],['Location','OS-level coordinate injection — GPS unverifiable']], outcome:'<span style="color:var(--gc-amber)">⚠️ Suspicious environment flagged</span><br>Core detects non-standard device posture before any user action occurs.' },
+      1: { title:'🌍 Core — Environment Integrity Check', sigs:[['VM indicators','Hypervisor fingerprint detected · Unusual sensor patterns'],['Location','Cannot triangulate — GPS/WiFi/cell data inconsistent'],['Risk','High — injection attack likely']], outcome:'<span style="color:var(--gc-red)">🚨 Core gates access</span><br>Suspicious device posture flagged. Pre-IDV block initiated. Attack surface reduced before document capture.' },
+      2: { title:'⚡ RiskGuard — Pre-IDV Block', sigs:[['Score','96/100 — Critical'],['Device environment','Virtual machine / emulator confirmed'],['Action','Block before document capture — IDV cost = $0']], outcome:'<span style="color:var(--gc-red)">🚨 Blocked before IDV</span><br>Attacker never reaches document capture. Core\'s role: reduce who gets to IDV. IDComply\'s role: handle what happens when they do.' },
+      3: { title:'🪪 IDComply (theoretical — if Core missed)', sigs:[['Injection detection','Document image API-injected — no real camera capture'],['Liveness check','No real face — biometric match fails'],['Result','Blocked at IDComply even if Core missed']], outcome:'<span style="color:var(--gc-red)">Defense-in-depth ✓</span><br>Two independent layers must both fail for attack to succeed. Core + IDComply = defense-in-depth for the most sophisticated vectors.' },
+      4: { title:'⛔ Attack Blocked', sigs:[['Outcome','Zero new accounts created'],['Cost','$0 IDV cost for attack attempt (blocked at Core)'],['Intelligence','Device environment fingerprint stored']], outcome:'<span style="color:var(--gc-teal)">Attack neutralized ✓</span><br>Most sophisticated IDV bypass vector neutralized. No other vendor in Jane\'s evaluation offers this combination.' },
+      5: { title:'📊 Threat Intelligence Captured', sigs:[['VM fingerprint','Stored for cross-platform pattern matching'],['Injection attempt','Logged for model training'],['Future attempts','Faster detection as patterns accumulate']], outcome:'<span style="color:var(--gc-teal)">Intelligence updated ✓</span><br>Every injection attempt strengthens detection models. The system compounds in value over time.' }
+    }
+  }
+};
+
+let currentPersona = 'legit';
+let currentStep = 2;
+
+function setPersona(key, btn) {
+  currentPersona = key;
+  const p = personaData[key];
+  document.querySelectorAll('.sc-btn').forEach(b => b.className = 'sc-btn');
+  btn.classList.add('active-green');
+  document.getElementById('p-name').textContent = p.name;
+  document.getElementById('p-device').textContent = p.device;
+  document.getElementById('p-loc').textContent = p.loc;
+  document.getElementById('p-ip').textContent = p.ip;
+  document.getElementById('p-intent').textContent = p.intent;
+  const intentColors = { legit:'var(--gc-teal)', ato:'var(--gc-red)', ring:'var(--gc-red)', inj:'var(--gc-red)' };
+  document.getElementById('p-intent').style.color = intentColors[key];
+
+  const stepStates = {
+    legit:  ['done','done','active','','',''],
+    ato:    ['done','done','active','','',''],
+    ring:   ['done','active','','','',''],
+    inj:    ['done','active','','','','']
+  };
+  const states = stepStates[key];
+  document.querySelectorAll('.j-step').forEach((s, i) => {
+    s.className = 'j-step ' + (states[i] || '');
+    if (states[i] === 'active') currentStep = i;
+  });
+
+  selectStep(states.indexOf('active') !== -1 ? states.indexOf('active') : 2);
+}
+
+function selectStep(n) {
+  currentStep = n;
+  const p = personaData[currentPersona];
+  const stepData = p.steps[n];
+  if (!stepData) return;
+  document.getElementById('j-detail-title').textContent = stepData.title;
+
+  const sigsEl = document.getElementById('j-signals');
+  sigsEl.innerHTML = '';
+  stepData.sigs.forEach(([label, val]) => {
+    sigsEl.innerHTML += `<div class="detail-row" style="margin-bottom:10px;align-items:flex-start;"><span class="detail-row-label" style="min-width:130px;flex-shrink:0;">${label}</span><span style="font-size:12px;color:var(--gc-text);line-height:1.5;">${val}</span></div>`;
+  });
+
+  document.getElementById('j-outcome').innerHTML = stepData.outcome;
+}
+
+// ─── ROI ANIMATION ────────────────────────────────────────
+function animateROI() {
+  document.querySelectorAll('.roi-fill').forEach(bar => {
+    const w = bar.dataset.width;
+    setTimeout(() => bar.style.width = w + '%', 100);
+  });
+}
+
+// ─── INIT ─────────────────────────────────────────────────
+drawGauge(0, '#1A1A4A');
+selectStep(2);
+
+// Pre-run legit scenario on load
+setTimeout(() => {
+  runScenario('legit', document.getElementById('sc-legit'));
+}, 800);
+</script>
+</body>
+</html>
